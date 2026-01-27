@@ -1,21 +1,14 @@
 local Testicle = {}
 
----@param opts table
-function Testicle.setup(opts) end
+---@class TesticleOpts
+---@field runners? table<string, TesticleRunnerModule> Custom runners by filetype
 
--- vim.api.nvim_create_user_command("YourTestCommand", function(opts)
---     local Internal = require("testicle.internal")
---
---     local run_all = opts.bang
---     if run_all then
---         Internal.run_all_tests(opts)
---     else
---         Internal.run_test_under_cursor(opts)
---     end
--- end, {
---     nargs = "*",
---     bang = true,
---     count = true,
--- })
+---@type TesticleOpts
+Testicle.config = {}
+
+---@param opts? TesticleOpts
+function Testicle.setup(opts)
+    Testicle.config = vim.tbl_deep_extend("force", Testicle.config, opts or {})
+end
 
 return Testicle

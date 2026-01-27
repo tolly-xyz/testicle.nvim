@@ -3,6 +3,8 @@ if vim.g.loaded_testicle == 1 then
 end
 vim.g.loaded_testicle = 1
 
+local augroup = vim.api.nvim_create_augroup("Testicle", { clear = true })
+
 ---@param runners TesticleRunnerModule
 local function run(runners)
     ---@param opts vim.api.keyset.create_user_command.command_args
@@ -21,9 +23,10 @@ local function run(runners)
 end
 
 vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
     callback = function(args)
         local filetype = args.match
-        local success, runners = pcall(require("testicle.runners").get_runners, filetype)
+        local success, runners = pcall(require, "testicle.runners." .. filetype)
         if not success then
             return
         end

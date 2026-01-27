@@ -1,6 +1,4 @@
-local Config = require("testicle.config")
-local Runners = require("testicle.runners")
-local M = {} -- function M.attach(bufnr, lang) end
+local M = {}
 --
 -- function M.detach(bufnr) end
 --

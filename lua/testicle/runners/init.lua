@@ -7,7 +7,7 @@
 ---@field args fun(p: string, f: string): string[]
 ---@field opts fun(): vim.SystemOpts
 
-M = {}
+local M = {}
 
 ---@class TesticleRunnerModule
 ---@field default TesticleRunner
