@@ -1,0 +1,19 @@
+---@alias JobstartCallback fun(job_id: integer, data: string[], event: string)
+
+---@class JobstartOpts - valid keys for opts passed to vim.fn.jobstart
+---@field clear_env (boolean) `env` defines the job environment exactly, instead of merging current environment.
+---@field cwd string default=|current-directory|) Working directory of the job.
+---@field detach boolean - Detach the job process: it will not be killed when Nvim exits. If the process exits before Nvim, `on_exit` will be invoked.
+---@field env table Map of environment variable name:value pairs extending (or replace with "clear_env") the current environment. |jobstart-env|
+---@field height number Height of the `pty` terminal.
+---@field on_exit JobstartCallback Callback invoked when the job exits.
+---@field on_stdout JobstartCallback Callback invoked when the job emits stdout data.
+---@field on_stderr JobstartCallback Callback invoked when the job emits stderr data.
+---@field overlapped boolean Sets FILE_FLAG_OVERLAPPED for the stdio passed to the child process. Only on MS-Windows; ignored on other platforms.
+---@field pty boolean Connect the job to a new pseudo terminal, and its streams to the master file descriptor. `on_stdout` receives all output, `on_stderr` is ignored. |terminal-start|
+---@field rpc boolean Use |msgpack-rpc| to communicate with the job over stdio. Then `on_stdout` is ignored, but `on_stderr` can still be used.
+---@field stderr_buffered boolean Collect data until EOF (stream closed) before invoking `on_stderr`. |channel-buffered|
+---@field stdout_buffered boolean Collect data until EOF (stream closed) before invoking `on_stdout`. |channel-buffered|
+---@field stdin string Either "pipe" (default) to connect the job's stdin to a channel or "null" to disconnect stdin.
+---@field term boolean Spawns {cmd} in a new pseudo-terminal session connected to the current (unmodified) buffer. Implies "pty". Default "height" and "width" are set to the current window dimensions. |jobstart()|. Defaults $TERM to "xterm-256color".
+---@field width number Width of the `pty` terminal.
