@@ -6,9 +6,10 @@ local Testicle = {}
 ---@type TesticleOpts
 Testicle.config = {}
 
----@param opts? TesticleOpts
-function Testicle.setup(opts)
-    Testicle.config = vim.tbl_deep_extend("force", Testicle.config, opts or {})
+-- Setup the plugin with user-defined options.
+---@param user_opts TesticleOpts | nil The user options.
+Testicle.setup = function(user_opts)
+    require("testicle.config").setup(user_opts)
 end
 
 return Testicle
