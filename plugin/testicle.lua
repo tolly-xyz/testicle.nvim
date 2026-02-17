@@ -1,3 +1,4 @@
+print("LOADED")
 if vim.g.loaded_testicle == 1 then
     return
 end
