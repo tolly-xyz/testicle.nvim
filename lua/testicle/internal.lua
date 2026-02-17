@@ -7,6 +7,7 @@ local M = {}
 local function current_test()
     local query = vim.treesitter.query.get(vim.bo.filetype, "testicle")
     if query == nil then
+        vim.api.nvim_echo({ { "No Testicle query found for file type: " }, { vim.bo.filetype } }, true, { err = true })
         return
     end
 
@@ -27,10 +28,10 @@ local function current_test()
         end
         ::continue::
     end
+    vim.print(test_name)
     if test_name == nil then
         return
     end
-    vim.print(test_name)
     return test_name
 end
 
