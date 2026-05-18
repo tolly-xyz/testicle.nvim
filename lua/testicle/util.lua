@@ -17,3 +17,12 @@
 ---@field stdin string Either "pipe" (default) to connect the job's stdin to a channel or "null" to disconnect stdin.
 ---@field term boolean Spawns {cmd} in a new pseudo-terminal session connected to the current (unmodified) buffer. Implies "pty". Default "height" and "width" are set to the current window dimensions. |jobstart()|. Defaults $TERM to "xterm-256color".
 ---@field width number Width of the `pty` terminal.
+
+M = {}
+
+function M.debug(...)
+    local settings = require('testicle.config').settings
+    if settings.debug then vim.print(...) end
+end
+
+return M

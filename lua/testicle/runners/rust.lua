@@ -1,23 +1,17 @@
 local M = {}
 
-DEFAULT_RUNNER = "cargo"
+DEFAULT_RUNNER = 'cargo'
+
+M.default = DEFAULT_RUNNER
 
 ---@type TesticleRunner
 M.cargo = {
     pkg = function()
-        local pkgid, _ = vim.system({ "cargo", "pkgid" }, { cwd = vim.fn.expand("%:h"), text = true })
-            :wait().stdout
-            :gsub("\n", "")
+        local pkgid, _ = vim.system({ 'cargo', 'pkgid' }, { cwd = vim.fn.expand '%:h', text = true }):wait().stdout:gsub('\n', '')
         return pkgid
     end,
-    single = function(pkg, func, opts)
-        return { "cargo", opts.args, "test", "--package", pkg, func }
-    end,
-    all = function(pkg, opts)
-        return { "cargo", opts.args, "test", "--package", pkg }
-    end,
+    single = function(pkg, func, opts) return table.concat({ 'cargo', 'test', opts.args, '--package', pkg, func }, ' ') end,
+    all = function(pkg, opts) return table.concat({ 'cargo', 'test', opts.args, '--package', pkg }, ' ') end,
 }
-
-M.default = M[DEFAULT_RUNNER]
 
 return M

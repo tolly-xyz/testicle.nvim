@@ -1,9 +1,8 @@
 local M = {}
---
--- function M.detach(bufnr) end
---
----
----@return string? - The name of the test function under the cursor, if it exists
+
+local util = require("testicle.util")
+
+--- @return string? - The name of the test function under the cursor, if it exists
 local function current_test()
     local query = vim.treesitter.query.get(vim.bo.filetype, "testicle")
     if query == nil then
@@ -28,7 +27,7 @@ local function current_test()
         end
         ::continue::
     end
-    vim.print(test_name)
+
     if test_name == nil then
         return
     end
@@ -38,43 +37,40 @@ end
 local DEFAULT_MODS = "botright"
 local DEFAULT_SIZE = 15
 
----@param runner TesticleRunner
+---@param cmd string
 ---@param opts vim.api.keyset.create_user_command.command_args
-function M.run_test_under_cursor(runner, opts)
-    local package_name = runner.pkg()
-    local test_name = current_test()
-    if test_name == nil then
-        vim.api.nvim_echo(
-            { { "No test function was found under cursor. Please add ! to command if you want to run all tests" } },
-            true,
-            { err = true }
-        )
-        return
-    end
-    local cmd = runner.single(package_name, test_name, opts)
+local function term(cmd, opts)
+    util.debug(opts)
+    local mods = opts.mods == "" and DEFAULT_MODS or opts.mods -- window creation mods
+    local size = opts.count <= 0 and DEFAULT_SIZE or opts.count -- height, or width if vertical
+    vim.cmd(string.format("%s %d new", mods, size))
+    vim.fn.jobstart(cmd, { term = true, cwd = vim.fn.expand("%:h") })
 
-    local curwin = vim.api.nvim_get_current_win()
-    local mods = opts.mods or DEFAULT_MODS -- window creation mods
-    local size = opts.count or DEFAULT_SIZE -- height, or width if vertical
-
-    vim.cmd(string.format("%s %dnew", mods, size))
-    vim.fn.jobstart(cmd, { term = true })
-    vim.api.nvim_set_current_win(curwin)
+    vim.cmd("normal! G") -- go to bottom so window follows command output
+    vim.cmd("wincmd p") -- go back to original window
 end
 
 ---@param runner TesticleRunner
 ---@param opts vim.api.keyset.create_user_command.command_args
-function M.run_all_tests(runner, opts)
+---@return boolean -- whether the command was successful
+function M.run(runner, opts)
     local package_name = runner.pkg()
-    local cmd = runner.all(package_name, opts)
-
-    local curwin = vim.api.nvim_get_current_win()
-    local mods = opts.mods or DEFAULT_MODS -- window creation mods
-    local size = opts.count or DEFAULT_SIZE -- height, or width if vertical
-
-    vim.cmd(("%s noautocmd %dnew"):format(mods, size))
-    vim.fn.jobstart(cmd, { term = true })
-    vim.api.nvim_set_current_win(curwin)
+    local cmd
+    if opts.bang then
+        cmd = runner.all(package_name, opts)
+    else
+        local test_name = current_test()
+        if test_name == nil then
+            vim.api.nvim_echo(
+                { { "No test function was found under cursor. Please add ! to command if you want to run all tests" } },
+                true,
+                { err = true }
+            )
+            return false
+        end
+        cmd = runner.single(package_name, test_name, opts)
+    end
+    return pcall(term, cmd, opts)
 end
 
 return M

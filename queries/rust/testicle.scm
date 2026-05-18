@@ -15,6 +15,6 @@
         .
         (attribute_item)*
         .
-        (function_item) @test_fn
+        (function_item) @test_func
     ))
 )
