@@ -1,8 +1,8 @@
 if vim.g.testicle_loaded == 1 then return end
 vim.g.testicle_loaded = 1
 
-local runners = require 'testicle.runners'
-local util = require 'testicle.util'
+local Runners = require 'testicle.runners'
+local Util = require 'testicle.util'
 
 local augroup = vim.api.nvim_create_augroup('Testicle', { clear = true })
 
@@ -21,10 +21,15 @@ vim.api.nvim_create_autocmd('FileType', {
     group = augroup,
     callback = function(args)
         local filetype = args.match
-        local file_runners = runners.get_runners(filetype)
+        local file_runners = Runners.get_runners(filetype)
         if file_runners == nil then return end
 
-        util.debug(args)
-        vim.api.nvim_buf_create_user_command(args.buf, 'Testicle', run(file_runners), { bang = true, count = true, nargs = '*' })
+        Util.debug(args)
+        vim.api.nvim_buf_create_user_command(
+            args.buf,
+            'Testicle',
+            run(file_runners),
+            { bang = true, count = true, nargs = '*' }
+        )
     end,
 })
